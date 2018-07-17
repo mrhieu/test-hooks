@@ -9,10 +9,9 @@ function execute(command, callback){
   exec(command, function(error, stdout, stderr){ callback(stdout); });
 };
 
-function getCurrentBranchName(callback) {
-  // OR try 'git symbolic-ref --short HEAD'
-  execute('git rev-parse --abbrev-ref HEAD', function(branchName) {
-    callback(branchName.replace('\n', ''));
+function getInputCommitMesasge(callback) {
+  execute('pwd', function(msg) {
+    callback(msg.replace('\n', ''));
   });
 }
 
@@ -26,17 +25,12 @@ function showValidationMessage(code) {
 }
 
 function main() {
-  console.log('Verifying branch…');
+  console.log('Verifying commit message…');
 
-  getCurrentBranchName(function(name) {
-    if (namePattern.test(name)) {
-      exitCode = 0;
-    }
+  getInputCommitMesasge(function(msg) {
 
-    showValidationMessage(exitCode);
-
-    process.exit(exitCode);
-  })
+    console.log('LOG', msg); // eslint-disable-line
+  });
 }
 
 main();

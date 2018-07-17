@@ -13,10 +13,10 @@
   "scripts": {
     "lint": "eslint ./src",
     "branch-name": "node pre-commit-scripts/branch_name.js",
-    "commit-msg": "echo \"Checking commit message\""
+    "commit-msg": "node pre-commit-scripts/commit_msg.js"
   },
   "pre-commit": {
-    "silent": true,
+    "silent": false,
     "run": [
       "lint",
       "branch-name",
