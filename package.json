@@ -1,0 +1,36 @@
+{
+  "name": "test-hooks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "pre-commit": "^1.2.2"
+  },
+  "scripts": {
+    "lint": "eslint ./src",
+    "branch-name": "node pre-commit-scripts/branch_name.js",
+    "commit-msg": "echo \"Checking commit message\""
+  },
+  "pre-commit": {
+    "silent": true,
+    "run": [
+      "lint",
+      "branch-name",
+      "commit-msg"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrhieu/test-hooks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrhieu/test-hooks/issues"
+  },
+  "homepage": "https://github.com/mrhieu/test-hooks#readme"
+}
