@@ -1,36 +1,41 @@
 'use strict';
 
-var exec = require('child_process').exec;
+var helper = require('./helper');
+var fs = require('fs')
 var exitCode = 1;
-// See this regex at https://regexr.com/3shts
-var namePattern = new RegExp(/(^develop$|^master$|((feature|fix|hot-fix|refactor|release|chore)\/.*)|rc-.*)/, 'i');
 
-function execute(command, callback){
-  exec(command, function(error, stdout, stderr){ callback(stdout); });
-};
+// See this regex at https://regexr.com/3sj3o
+var regex = new RegExp(/(feat|fix|style|refactor|chore|review)(\(.*\))?:.*/, 'i');
 
-function getInputCommitMesasge(callback) {
-  execute('pwd', function(msg) {
-    callback(msg.replace('\n', ''));
-  });
-}
-
-function showValidationMessage(code) {
-  if (code === 1) {
-    console.log('\x1b[31m%s\x1b[0m', 'Invalid branch name');
-
-    console.log('See our Git convention at: \x1b[32mhttps://github.com/refuel4/sme-onboarding/wiki/Git-Convention \x1b[0m');
-
-  }
+// Get diff commits between DEVELOP and current branch
+function getDiff(callback) {
+  helper.getCurrentBranchName(function(name) {
+    helper.execute('git log --pretty=format:\'%s\' --abbrev-commit --date=relative develop..' + name, function(commits) {
+      commits = commits.split('\n');
+      callback((commits.length ===1 && commits[0] === '') ? [] : commits);
+    });
+  })
 }
 
 function main() {
-  console.log('Verifying commit message…');
+  console.log('\x1b[32mCommitmsg Hook:\x1b[0m Verifying commit message…');
 
-  getInputCommitMesasge(function(msg) {
+  getDiff((commits) => {
+    if (!commits.length) {
+      exitCode = 0;
+    } else {
+      for (var i = 0; i < commits.length; i++) {
+        if (regex.test(commits[i])) {
+          exitCode = 0;
+          break;
+        }
+      }
+    }
 
-    console.log('LOG', msg); // eslint-disable-line
-  });
+    helper.showValidationMessage(exitCode, 'Invalid commit message. At least 1 commit meets the convention');
+
+    process.exit(exitCode);
+  })
 }
 
 main();
