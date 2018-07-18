@@ -8,6 +8,7 @@ var exitCode = 1;
 var regex = new RegExp(/(feat|fix|style|refactor|chore|review)(\(.*\))?:.*/, 'i');
 
 // Get diff commits between DEVELOP and current branch
+// Stackoverflow: https://stackoverflow.com/a/13965459
 function getDiff(callback) {
   helper.getCurrentBranchName(function(name) {
     helper.execute('git log --pretty=format:\'%s\' --abbrev-commit --date=relative develop..' + name, function(commits) {
