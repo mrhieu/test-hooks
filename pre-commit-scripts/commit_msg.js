@@ -5,13 +5,13 @@ var fs = require('fs')
 var exitCode = 1;
 
 // See this regex at https://regexr.com/3sj3o
-var regex = new RegExp(/(feat|fix|style|refactor|chore|review)(\(.*\))?:.*/, 'i');
+var regex = new RegExp(/^(feat|fix|style|refactor|chore|review)(\(.*\))?:.*/, 'i');
 
 // Get diff commits between DEVELOP and current branch
 // Stackoverflow: https://stackoverflow.com/a/13965459
-function getDiff(callback) {
+function getDiff(base, callback) {
   helper.getCurrentBranchName(function(name) {
-    helper.execute('git log --pretty=format:\'%s\' --abbrev-commit --date=relative develop..' + name, function(commits) {
+    helper.execute('git log --pretty=format:\'%s\' --abbrev-commit --date=relative ' + base + '..' + name, function(commits) {
       commits = commits.split('\n');
       callback((commits.length ===1 && commits[0] === '') ? [] : commits);
     });
@@ -21,7 +21,8 @@ function getDiff(callback) {
 function main() {
   console.log('\x1b[32mCommitmsg Hook:\x1b[0m Verifying commit message…');
 
-  getDiff((commits) => {
+  // Currently I only compare with `develop`
+  getDiff('develop', function(commits) {
     if (!commits.length) {
       exitCode = 0;
     } else {
